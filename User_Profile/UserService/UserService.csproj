@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>ee21aa12-9874-4239-a24d-5df6e9d708c9</UserSecretsId>
+    <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
+    <RootNamespace>Backend_Kwetter</RootNamespace>
+    <LangVersion>12</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\UserService.Core\UserService.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="UserService.DAL\Class1.cs">
+      <Link>User\Class1.cs</Link>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="UserService.DAL\obj\project.assets.json" />
+    <_ContentIncludedByDefault Remove="UserService.DAL\obj\project.packagespec.json" />
+    <_ContentIncludedByDefault Remove="UserService.DAL\obj\User.csproj.nuget.dgspec.json" />
+    <_ContentIncludedByDefault Remove="UserService.DAL\obj\UserService.DAL.csproj.nuget.dgspec.json" />
+  </ItemGroup>
+
+</Project>

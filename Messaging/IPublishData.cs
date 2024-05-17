@@ -4,11 +4,10 @@ namespace Messaging;
 
 public interface IPublishData<T>
 {
-    RoutingKey QueueName { get; }
+    Exchanges Exchange { get;  }
+    RoutingKey RoutingKey { get; }
     T data { get; }
-    bool Durable { get;  }
-    bool Exclusive { get; }
-    bool Persistent { get; }
+     QueueOptions QueueOptions { get;  }
     Guid CorreletionID { get; }
  
 

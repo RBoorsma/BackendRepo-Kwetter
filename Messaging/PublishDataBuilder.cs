@@ -7,9 +7,8 @@ public class PublishDataBuilder<T>
     private T body;
     private RoutingKey key;
     private Guid correlationid = Guid.NewGuid();
-    private bool durable = true;
-    private bool exclusive = false;
-    private bool persistent = true;
+    private Exchanges exchange = Exchanges.Empty;
+    private QueueOptions QueueOptions = null;
 
     public PublishDataBuilder<T> setBody(T body)
     {
@@ -29,24 +28,13 @@ public class PublishDataBuilder<T>
         return this;
     }
 
-    public PublishDataBuilder<T> isDurable(bool durable)
+    public PublishDataBuilder<T> setQueueOptions(QueueOptions options)
     {
-        this.durable = durable;
+        this.QueueOptions = options;
         return this;
     }
 
-    public PublishDataBuilder<T> isExclusive(bool exclusive)
-    {
-        this.exclusive = exclusive;
-        return this;
-    }
-
-    public PublishDataBuilder<T> isPersistent(bool persistent)
-    {
-        this.persistent = persistent;
-        return this;
-    }
-
+    
 
     public IPublishData<T> build()
     {
@@ -56,7 +44,8 @@ public class PublishDataBuilder<T>
                 "Both message body and queue must be set before creating an instance of PublisData");
         }
 
-        IPublishData<T> _publishData = new PublishData<T>(body, key, durable, exclusive, persistent, correlationid);
+        IPublishData<T> _publishData =
+            new PublishData<T>(body, key, exchange, QueueOptions, correlationid);
         return _publishData;
     }
 }

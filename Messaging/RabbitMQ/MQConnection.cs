@@ -5,7 +5,7 @@ namespace Messaging.RabbitMQ;
 public class MQConnection
 {
     private ConnectionFactory Factory;
-    internal IConnection _connection { get; private set; }
+    internal IConnection Connection { get; private set; }
 
     public MQConnection()
     {
@@ -15,18 +15,18 @@ public class MQConnection
             UserName = RabbitMQData.user,
             Password = RabbitMQData.password
         };
-        _connection = Factory.CreateConnection();
+        Connection = Factory.CreateConnection();
     }
 
     public void CloseConnection()
     {
-        if (_connection is not {IsOpen: false})
-            _connection.Close();
+        if (Connection is not {IsOpen: false})
+            Connection.Close();
     }
 
     public void OpenConnection()
     {
-        if (_connection is not {IsOpen: true})
-            _connection = Factory.CreateConnection();
+        if (Connection is not {IsOpen: true})
+            Connection = Factory.CreateConnection();
     }
 }

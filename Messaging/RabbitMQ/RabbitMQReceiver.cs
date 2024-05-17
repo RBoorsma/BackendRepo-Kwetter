@@ -8,19 +8,20 @@ using UserProfileService.Core.Messaging.Events;
 
 namespace Messaging.RabbitMQ;
 
-public class RabbitMQReceiver<T>
+public class RabbitMQReceiver<T>(MQConnection mqConnection)
 {
-    private readonly ConnectionFactory Factory = new ConnectionFactory()
-        {HostName = RabbitMQData.hostname, UserName = RabbitMQData.user, Password = RabbitMQData.password};
+    // private readonly ConnectionFactory Factory = new ConnectionFactory()
+    //     {HostName = RabbitMQData.hostname, UserName = RabbitMQData.user, Password = RabbitMQData.password};
 
     public event EventHandler<MessageReceivedEventArgs<T>>? MessageReceived;
-    private IConnection? connection;
+
     private IModel? channel;
-    
+
 
     public void StartListeningToMultiple(List<MessageQueue> queues, T requestbody, bool autoAck = true,
         bool seprateConsumer = true)
     {
+        throw new NotImplementedException();
         StartConnection();
         Console.WriteLine(" [*] Waiting for messages.");
         if (seprateConsumer)
@@ -43,19 +44,20 @@ public class RabbitMQReceiver<T>
 
     private void StartConnection()
     {
-        connection = Factory.CreateConnection();
-        channel = connection.CreateModel();
-        
+        if (!mqConnection.Connection.IsOpen)
+            mqConnection.OpenConnection();
+        mqConnection.OpenConnection();
+        channel = mqConnection.Connection.CreateModel();
     }
 
-    public void StartListeningTo(MessageQueue key, T requestBody, bool autoAck)
+    public void StartListeningTo(MessageQueue queue, bool autoAck = true)
     {
-        if (connection is not {IsOpen: true})
+        if (mqConnection.Connection is not { IsOpen: true })
             StartConnection();
 
         Console.WriteLine(" [*] Waiting for messages.");
         EventingBasicConsumer consumer = SetupListener();
-        ConsumeChannel(key, autoAck, consumer);
+        ConsumeChannel(queue, autoAck, consumer);
     }
 
     private EventingBasicConsumer SetupListener()
@@ -79,7 +81,7 @@ public class RabbitMQReceiver<T>
             autoAck: autoAck,
             consumer: consumer);
     }
-    
+
 
     private void OnMessageReceived(T data)
     {
@@ -88,7 +90,8 @@ public class RabbitMQReceiver<T>
 
     public void Dispose()
     {
-        connection?.Dispose();
+        mqConnection.CloseConnection();
+        mqConnection.Connection?.Dispose();
         channel?.Dispose();
     }
 }

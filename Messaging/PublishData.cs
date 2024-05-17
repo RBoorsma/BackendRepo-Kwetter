@@ -4,16 +4,19 @@ namespace Messaging;
 
 public class PublishData<T> : IPublishData<T>
 {
-    public RoutingKey QueueName { get; }
+    public Exchanges Exchange { get; }
+    public RoutingKey RoutingKey { get; }
     public T data { get; }
-    public bool Durable { get; } = true;
-    public bool Exclusive { get; } = false;
-    public bool Persistent { get; } = true;
-    public Guid CorreletionID { get; } = Guid.NewGuid();
+    public QueueOptions QueueOptions { get;  }
+    public Guid CorreletionID { get; }
 
-    internal PublishData(T data, RoutingKey queueName, bool durable, bool exclusive, bool persistent,
+    internal PublishData(T data, RoutingKey RoutingKey, Exchanges exchange, QueueOptions queueOptions,
         Guid correlationId)
     {
         this.data = data;
+        this.RoutingKey = RoutingKey;
+        this.QueueOptions = queueOptions;
+        this.Exchange = exchange;
+        this.CorreletionID = correlationId;
     }
 }

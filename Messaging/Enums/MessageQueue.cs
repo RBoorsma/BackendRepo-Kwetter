@@ -4,5 +4,5 @@ namespace Kwetter.Library.Messaging.Enums;
 
 public enum MessageQueue
 {
-    [EnumMember(Value = "Registration")] RegisterQueue
+    [EnumMember(Value = "Registration")] RegisterQueue,
 }

@@ -1,13 +1,15 @@
-﻿using System.Text.Json;
+﻿using System.IO.Compression;
+using System.Text.Json;
 using Kwetter.Library.Messaging.Enums;
+using Messaging.RabbitMQ;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.DependencyInjection;
+using RabbitMQ.Client.Logging;
 using UserProfileService.Core.Messaging.Events;
 using UserProfileService.Core.Messaging.Models;
 using UserProfileService.Core.Messaging.RabbitMQ;
 using UserProfileService.Core.Service;
 using UserProfileService.DAL.Repository;
-
 
 
 namespace UserProfileService.Core.Messaging.Handler;
@@ -17,6 +19,7 @@ public class MessageHandler : IMessageHandler
     private readonly IServiceProvider _serviceProvider;
     private readonly IRabbitMqConsumer _mqConsumer;
     private readonly IRabbitMqPublisher _mqPublisher;
+
 
     public MessageHandler(IRabbitMqConsumer mqConsumer, IRabbitMqPublisher mqPublisher,
         IServiceProvider serviceProvider)

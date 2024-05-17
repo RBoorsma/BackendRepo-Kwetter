@@ -2,6 +2,7 @@ using Kwetter.Library.Messaging.Enums;
 using Messaging;
 using UserProfileService.Core;
 using UserProfileService.Core.Messaging.Handler;
+using UserProfileService.Core.Messaging.Models;
 using UserProfileService.Core.Messaging.RabbitMQ;
 using UserProfileService.Core.Profiles;
 using UserProfileService.Core.Service;
@@ -39,12 +40,17 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-IMessageHandler messageBus = app.Services.GetRequiredService<IMessageHandler>();
-Task.Run(() =>
+// IMessageHandler messageBus = app.Services.GetRequiredService<IMessageHandler>();
+// messageBus.StartListening();
+NewMessageHandler handler = new NewMessageHandler();
+handler.StartListening();
+UserRequestBody body = new UserRequestBody()
 {
-    messageBus.StartListening();
-});
+    UserID = Guid.NewGuid(),
+    Status = Status.Created.ToString(),
+    CorreletionID = Guid.NewGuid()
+};
+handler.SendStatus(body);
 
 
 app.Run();
-

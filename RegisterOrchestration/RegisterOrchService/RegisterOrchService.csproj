@@ -12,6 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\Messaging\Messaging.csproj" />
       <ProjectReference Include="..\RegisterOrchService.Core\RegisterOrchService.Core.csproj" />
     </ItemGroup>
 

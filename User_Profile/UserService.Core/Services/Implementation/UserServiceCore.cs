@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Isopoh.Cryptography.Argon2;
+using Kwetter.Library.Messaging.Datatypes;
 using UserService.Core.Contracts;
 using UserService.Core.ViewModel;
 using UserService.Core.ViewModel.RequestBody;
@@ -9,17 +10,28 @@ using UserService.DAL.Exceptions;
 using UserService.DAL.Model;
 using UserService.DAL.Repository;
 using UserService.Core.Messaging.Handler;
+using UserService.Core.Messaging.Models;
 
 namespace UserService.Core.Services;
 
-public class UserServiceCore(IUserRepository userRepository, IMapper mapper,  IMessageHandler rabbitMq) : IUserService
+public class UserServiceCore(
+    IUserRepository userRepository,
+    IMapper mapper,
+    IUserMessageHandler messageHandler) : IUserService
 {
-    public async Task Create(RegisterRequestBody model)
+    public async Task<bool> Create(RegisterRequestBody model)
     {
-        model.Password = Argon2.Hash(model.Password);
-        UserModel userModel = new UserModel();
-        mapper.Map(model, userModel);
-        await userRepository.Create(userModel);
+        try
+        {
+            model.Password = Argon2.Hash(model.Password);
+            UserModel userModel = mapper.Map<UserModel>(model);
+            return await userRepository.Create(userModel);
+            
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     public async Task<LoginResponseBody?> GetByLogin(LoginRequestBody loginModel)

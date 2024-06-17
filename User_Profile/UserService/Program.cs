@@ -1,10 +1,12 @@
 using System.Configuration;
+using Messaging.RabbitMQ;
 using Microsoft.EntityFrameworkCore;
 using UserService.Core.Messaging;
 using UserService.Core.Profiles;
 using UserService.Core.Services;
-using UserService.Core.Messaging.RabbitMQ;
+
 using UserService.Core.Messaging.Handler;
+using UserService.Core.Messaging.Models;
 using UserService.DAL.Context;
 using UserService.DAL.Repository;
 
@@ -18,9 +20,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddTransient<IUserService, UserServiceCore>();
 builder.Services.AddTransient<IUserRepository, UserRepository>();
-builder.Services.AddTransient<IRabbitMqPublisher, RabbitMqPublisher>();
-builder.Services.AddTransient<IRabbitMqConsumer, RabbitMqConsumer>();
-builder.Services.AddTransient<IMessageHandler, MessageHandler>();
+builder.Services.AddTransient<IUserMessageHandler, UserMessageHandler>();
+builder.Services.AddTransient(typeof(IRabbitMQReceiver<>), typeof(RabbitMQReceiver<>));
+builder.Services.AddTransient<IRabbitMQPublisher, RabbitMQPublisher>();
+builder.Services.AddTransient<IMQConnection, MQConnection>();
 builder.Services.AddDbContext<UserDbContext>();
 builder.Services.AddAutoMapper(typeof(UserProfile));
 
@@ -38,6 +41,8 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+IUserMessageHandler handler =  app.Services.GetRequiredService<IUserMessageHandler>();
+handler.StartListening();
 
 app.Run();
 

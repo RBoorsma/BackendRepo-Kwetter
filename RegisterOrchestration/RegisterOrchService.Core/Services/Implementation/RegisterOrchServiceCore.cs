@@ -3,16 +3,18 @@ using System.Net;
 using System.Text;
 using System.Text.Json;
 using AutoMapper;
+using Kwetter.Library.Messaging.Datatypes;
 using RegisterOrchService.Core.Messaging;
 using RegisterOrchService.Core.OrchestrationModels.UserAuth;
 using RegisterOrchService.Core.OrchestrationModels.UserProfile;
+using RegisterOrchService.Core.Services.Models;
 using RegisterOrchService.Core.ViewModel;
 using RegisterOrchService.Core.ViewModel.ResponseBody;
 
 
 namespace RegisterOrchService.Core.Services;
 
-public class RegisterOrchServiceCore(IMapper mapper, IRabbitMqService mqService) : IRegisterOrchService
+public class RegisterOrchServiceCore(IMapper mapper, IMessageHandler handler) : IRegisterOrchService
 {
     private readonly string userAuthURL = "https://localhost:7272/User/create";
     private readonly string userProfileURL = "https://localhost:7106/profiles/Create";
@@ -44,9 +46,6 @@ public class RegisterOrchServiceCore(IMapper mapper, IRabbitMqService mqService)
         
         using HttpClient client = new();
         {
-            HttpResponseMessage profileTasktest = await client.PostAsync(userProfileURL, profileContent);
-            if(profileTasktest.IsSuccessStatusCode)
-                mqService.SendStatus(Guid.NewGuid(), auth.UserID, Status.Failed);
             try
             {
                 HttpResponseMessage authTask = await client.PostAsync(userAuthURL, userContent);
@@ -58,7 +57,7 @@ public class RegisterOrchServiceCore(IMapper mapper, IRabbitMqService mqService)
                         return true;
                     }
                 }
-                mqService.SendStatus(Guid.NewGuid(), auth.UserID, Status.Failed);
+                handler.SendStatus(new UserMessageBody() {CorreletionID = auth.CorreletionID, Status = Status.Failed, UserID = auth.UserID});
                 return false;
             }
             catch (Exception e)

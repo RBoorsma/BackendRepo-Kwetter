@@ -1,11 +1,10 @@
-using Kwetter.Library.Messaging.Enums;
-using Messaging;
-using UserProfileService.Core;
+using Kwetter.Library.Messaging.Datatypes;
+using Messaging.RabbitMQ;
 using UserProfileService.Core.Messaging.Handler;
 using UserProfileService.Core.Messaging.Models;
-using UserProfileService.Core.Messaging.RabbitMQ;
 using UserProfileService.Core.Profiles;
 using UserProfileService.Core.Service;
+using UserProfileService.Core.ViewModel.ResponseBody;
 using UserProfileService.DAL.Context;
 using UserProfileService.DAL.Repository;
 using UserProfileService.DAL.Repository.Implementation;
@@ -20,9 +19,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddTransient<IUserProfileRepository, UserProfileRepository>();
 builder.Services.AddTransient<IUserProfileService, UserProfileServiceCore>();
-builder.Services.AddTransient<IRabbitMqPublisher, RabbitMqPublisher>();
-builder.Services.AddTransient<IRabbitMqConsumer, RabbitMqConsumer>();
-builder.Services.AddTransient<IMessageHandler, MessageHandler>();
+builder.Services.AddTransient(typeof(IRabbitMQReceiver<>), typeof(RabbitMQReceiver<>));
+builder.Services.AddTransient<IRabbitMQPublisher, RabbitMQPublisher>();
+builder.Services.AddTransient<IMessageHandler, UserMessageHandler>();
+builder.Services.AddSingleton<IMQConnection, MQConnection>();
 builder.Services.AddDbContext<UserProfileDbContext>();
 builder.Services.AddAutoMapper(typeof(UserProfilesProfile));
 
@@ -40,17 +40,18 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-// IMessageHandler messageBus = app.Services.GetRequiredService<IMessageHandler>();
-// messageBus.StartListening();
-NewMessageHandler handler = new NewMessageHandler();
-handler.StartListening();
-UserRequestBody body = new UserRequestBody()
+
+UserMessageBody body = new UserMessageBody()
 {
     UserID = Guid.NewGuid(),
     Status = Status.Created.ToString(),
     CorreletionID = Guid.NewGuid()
 };
-handler.SendStatus(body);
+
+IMessageHandler handler =  app.Services.GetRequiredService<IMessageHandler>();
+handler.StartListening();
+
+
 
 
 app.Run();

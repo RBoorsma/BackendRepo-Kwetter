@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
-using Kwetter.Library.Messaging.Enums;
-using Microsoft.EntityFrameworkCore.Diagnostics;
+using Kwetter.Library.Messaging.Datatypes;
 using UserProfileService.Core.Messaging.Handler;
 using UserProfileService.Core.Messaging.Models;
 using UserProfileService.DAL.Model;
@@ -16,10 +15,31 @@ public class UserProfileServiceCore(
 {
     public async Task Create(NewProfileRequestBody body)
     {
-        await userRepository.Create(mapper.Map<UserProfile>(body));
-        UserRequestBody messageData = mapper.Map<UserRequestBody>(body);
-        messageData.Status = Status.Created.ToString();
+        UserMessageBody messageData = new();
+        try
+        {
+            if (await userRepository.Create(mapper.Map<UserProfile>(body)))
+            {
+                messageData = mapper.Map<UserMessageBody>(body);
+                messageData.Status = Status.Created.ToString();
+            }
+            else
+            {
+
+                messageData.Status = Status.Failed.ToString();
+                
+            }
+
+        }
+        catch
+        {
+            messageData.Status = Status.Failed.ToString();
+        }
         messageHandler.SendStatus(messageData);
+
+        
+        
+       
     }
 
     public async Task RollbackOrDeleteCreation(Guid UserID)
@@ -31,7 +51,7 @@ public class UserProfileServiceCore(
     {
         Task<bool> result = userRepository.RollBackOrDeleteAsync(UserID);
 
-        UserRequestBody messageData = new()
+        UserMessageBody messageData = new()
         {
             UserID = UserID,
             CorreletionID = Correletion

@@ -8,7 +8,7 @@ namespace UserService.Core.Services;
 public interface IUserService
 {
 
-    public Task Create(RegisterRequestBody model);
+    public Task<bool> Create(RegisterRequestBody model);
     public Task<LoginResponseBody?> GetByLogin(LoginRequestBody loginModel);
     public Task RollbackOrDeleteCreation(Guid UserID, Guid Correletion);
     public Task RollbackOrDeleteCreation(Guid UserID);

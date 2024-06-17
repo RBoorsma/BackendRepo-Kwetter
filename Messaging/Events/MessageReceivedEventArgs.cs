@@ -1,7 +1,7 @@
 ﻿
 
 
-namespace UserProfileService.Core.Messaging.Events;
+namespace Kwetter.Library.Messaging.Events;
 
 public class MessageReceivedEventArgs<T> : EventArgs
 {

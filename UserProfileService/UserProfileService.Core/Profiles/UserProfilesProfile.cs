@@ -11,7 +11,7 @@ public class UserProfilesProfile : Profile
     public UserProfilesProfile()
     {
         CreateMap<NewProfileRequestBody, UserProfile>();
-        CreateMap<NewProfileRequestBody, UserRequestBody>();
+        CreateMap<NewProfileRequestBody, UserMessageBody>();
         CreateMap<UserProfile, ProfileResponseBody>();
     }
 }

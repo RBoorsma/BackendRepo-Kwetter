@@ -1,6 +1,8 @@
+using Messaging.RabbitMQ;
 using RegisterOrchService.Core.Messaging;
 using RegisterOrchService.Core.Profiles;
 using RegisterOrchService.Core.Services;
+using RegisterOrchService.Core.Services.Models;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,7 +13,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddTransient<IRegisterOrchService, RegisterOrchServiceCore>();
-builder.Services.AddTransient<IRabbitMqService, RabbitMqService>();
+builder.Services.AddTransient<IRabbitMQPublisher, RabbitMQPublisher>();
+builder.Services.AddTransient(typeof(IRabbitMQReceiver<>), typeof(RabbitMQReceiver<>));
+builder.Services.AddTransient<IMessageHandler, MessageHandler>();
+builder.Services.AddTransient<IMQConnection, MQConnection>();
 builder.Services.AddAutoMapper(typeof(OrchestrationProfile));
 var app = builder.Build();
 
@@ -26,4 +31,5 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 app.MapControllers();
+
 app.Run();

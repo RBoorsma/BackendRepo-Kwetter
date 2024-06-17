@@ -8,6 +8,7 @@ using UserService.Core.ViewModel.RequestBody;
 using UserService.Core.ViewModel.ResponseBody;
 using UserService.DAL.Exceptions;
 using UserService.DAL.Model;
+using ActionResult = UserService.Core.Contracts.ActionResult;
 
 namespace UserService.Controllers
 {
@@ -18,20 +19,10 @@ namespace UserService.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] RegisterRequestBody model)
         {
-            try
-            {
-                await userService.Create(model);
-            }
-            catch (UserAlreadyExistsException e)
-            {
-                return BadRequest(e.Message);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(500, "Something went wrong");
-            }
-
-            return Created();
+            bool result = await userService.Create(model);
+            if (await userService.Create(model))
+                return Created();
+            return StatusCode(500);
         }
 
         [HttpPost("GetByLogin")]

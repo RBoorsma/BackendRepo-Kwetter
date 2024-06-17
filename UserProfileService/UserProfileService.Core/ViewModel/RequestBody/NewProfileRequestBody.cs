@@ -6,5 +6,4 @@ public class NewProfileRequestBody
     public string Lastname { get; set; }
     public string Username { get; set;  }
     public Guid UserID { get; set; }
-    public Guid CorreletionID { get; set; }
 }

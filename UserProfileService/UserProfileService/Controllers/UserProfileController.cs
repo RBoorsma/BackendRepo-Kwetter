@@ -19,7 +19,14 @@ public class UserProfileController(IUserProfileService userProfileService) : Con
     [HttpPost("Create")]
     public async Task<IActionResult> Create(NewProfileRequestBody body)
     {
-        await userProfileService.Create(body);
+        try
+        {
+            await userProfileService.Create(body);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500);
+        }
 
         return Ok();
     }   

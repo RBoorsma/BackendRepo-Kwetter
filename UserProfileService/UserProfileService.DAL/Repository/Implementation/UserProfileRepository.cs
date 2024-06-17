@@ -11,7 +11,7 @@ namespace UserProfileService.DAL.Repository.Implementation;
 
 public class UserProfileRepository(UserProfileDbContext dbContext) : IUserProfileRepository
 {
-    public async Task Create(UserProfile userProfile)
+    public async Task<bool> Create(UserProfile userProfile)
     {
         if (await dbContext.UserProfiles.AnyAsync(x => x.Username == userProfile.Username))
         {
@@ -25,10 +25,12 @@ public class UserProfileRepository(UserProfileDbContext dbContext) : IUserProfil
                 await dbContext.AddAsync(userProfile);
                 await dbContext.SaveChangesAsync();
                 await transaction.Result.CommitAsync();
+                return true;
             }
             catch (Exception e)
             {
                 await transaction.Result.RollbackAsync();
+                return false;
             }
         }
     }

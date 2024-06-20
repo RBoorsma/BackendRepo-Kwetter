@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Folder Include="Messaging\Models\" />
+      <Folder Include="Profile\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Messaging\Messaging.csproj" />
+      <ProjectReference Include="..\KweetService.DAL\KweetService.DAL.csproj" />
+    </ItemGroup>
+
+</Project>

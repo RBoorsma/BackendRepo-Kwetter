@@ -17,7 +17,7 @@ jobs:
     strategy:
       matrix:
         dotnet-version: [8.0.x]
-        os: [windows-latest]
+        os: [ubuntu-latest]
 
     steps:
       - name: Checkout the Code
@@ -44,7 +44,7 @@ jobs:
     strategy:
       matrix:
         dotnet-version: [8.0.x]
-        os: [ubuntu-latest]
+        os: [windows-latest]
     steps:
       - name: Set up JDK 17
         uses: actions/setup-java@v3

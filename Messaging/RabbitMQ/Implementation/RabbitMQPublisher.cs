@@ -24,7 +24,7 @@ public class RabbitMQPublisher(IMQConnection mqConnection) : IRabbitMQPublisher
     {
         try
         {
-            IMQConnection connection = new MQConnection();
+            IMQConnection connection = new MQConnection(mqConnection.Configuration);
             mqConnection = connection;
             return true;
         }
@@ -39,6 +39,16 @@ public class RabbitMQPublisher(IMQConnection mqConnection) : IRabbitMQPublisher
         return channel.CreateBasicProperties();
     }
 
+    public bool DeclareQueues(string queue, bool durable = true, bool exclusive = false, bool autoDelete = false)
+    {
+        if (mqConnection.Connection is not { IsOpen: true } || channel == null)
+            StartConnection();
+        channel.QueueDeclare(queue: queue, durable: durable,
+            exclusive: exclusive, autoDelete: autoDelete,
+            arguments: null);
+
+        return true;
+    }
     public bool SendMessage(IPublishData publishData)
     {
         if (mqConnection.Connection is not { IsOpen: true } || channel == null)

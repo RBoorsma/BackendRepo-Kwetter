@@ -12,17 +12,20 @@ public class UserDbContext : DbContext
         
     }
 
-    public UserDbContext(DbContextOptions<UserDbContext> options) : base(options)
+    public UserDbContext(DbContextOptions options) : base(options)
     {
         
     }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        Console.Write(Directory.GetCurrentDirectory());
-        IConfigurationRoot configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json").Build();
+        // Console.Write(Directory.GetCurrentDirectory());
+        // IConfigurationRoot configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
+        //     .AddJsonFile("appsettings.json").Build();
 
-        string connectionString = configuration.GetConnectionString("AppDb")!;
+       // string connectionString = configuration.GetConnectionString("AppDb")!;
+       string environmentVariable = Environment.GetEnvironmentVariable("MySQL");
+       string connectionString = environmentVariable + ";database=Users;";
+       
         optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
     }
         

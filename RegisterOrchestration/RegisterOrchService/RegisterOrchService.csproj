@@ -4,6 +4,8 @@
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>75dabfb7-7bf3-42db-aa4c-d34cf6ef181b</UserSecretsId>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
     <ItemGroup>
@@ -14,6 +16,12 @@
     <ItemGroup>
       <ProjectReference Include="..\..\Messaging\Messaging.csproj" />
       <ProjectReference Include="..\RegisterOrchService.Core\RegisterOrchService.Core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
     </ItemGroup>
 
 </Project>

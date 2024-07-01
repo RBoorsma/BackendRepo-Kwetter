@@ -10,8 +10,7 @@ namespace UserService.Core.Messaging.Handler;
 public class UserMessageHandler : IUserMessageHandler
 {
     private readonly IServiceProvider _serviceProvider;
-
-    private MQConnection _connection;
+    
     private readonly IRabbitMQReceiver<UserMessageBody> _receiver;
 
     private readonly PublishDataBuilder _messageBuilder = new();
@@ -27,11 +26,7 @@ public class UserMessageHandler : IUserMessageHandler
       
     }
 
-    public UserMessageHandler WithConnection(MQConnection connection)
-    {
-        this._connection = connection;
-        return this;
-    }
+
     
 
     public void SendStatus(UserMessageBody body)
@@ -44,19 +39,20 @@ public class UserMessageHandler : IUserMessageHandler
 
     public async void OnMessageReceived(object? sender, MessageReceivedEventArgs<UserMessageBody> eventArgs)
     {
+        
         IServiceScopeFactory scopeFactory = _serviceProvider.GetRequiredService<IServiceScopeFactory>();
         using IServiceScope scope = scopeFactory.CreateScope();
         {
             IServiceProvider scopedServices = scope.ServiceProvider;
-
+            
             IUserService? userService = scopedServices.GetService<IUserService>();
             if (eventArgs.Data?.Status == Status.Created.ToString())
             {
-                //To Implement Future Logic
+                //Todo Implement Future Logic
             }
             else if (eventArgs.Data?.Status == Status.Failed.ToString())
             {
-                await userService.RollbackOrDeleteCreation(eventArgs.Data.UserID, eventArgs.Data.CorreletionID);
+                await userService.RollbackOrDeleteCreation(eventArgs.Data.ID, eventArgs.Data.CorreletionID);
                 
             }
         }
@@ -66,4 +62,5 @@ public class UserMessageHandler : IUserMessageHandler
     {
         _receiver.StartListeningTo(MessageQueue.Registration);
     }
+    
 }

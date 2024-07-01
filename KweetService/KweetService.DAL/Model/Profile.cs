@@ -2,9 +2,9 @@ namespace KweetService.DAL.Model;
 
 public class Profile
 {
-    public Profile(Guid profileId)
+    public Profile(Guid id)
     {
-        ProfileID = profileId;
+        _id = id;
     }
-    public Guid ProfileID { get; set; }
+    public Guid _id { get; set; }
 }

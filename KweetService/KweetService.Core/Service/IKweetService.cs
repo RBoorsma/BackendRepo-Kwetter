@@ -6,5 +6,6 @@ namespace KweetService.Core.Service;
 public interface IKweetService
 {
     Task<bool> AddKweetAsync(KweetModel kweet);
-    Task<Collection<KweetModel?>> GetKweetsByProfileAsync(Profile profile);
+    Task<List<KweetModel>?> GetKweetsByProfileAsync(Profile profile);
+    Task<KweetModel?> GetKweetByID(Guid guid);
 }

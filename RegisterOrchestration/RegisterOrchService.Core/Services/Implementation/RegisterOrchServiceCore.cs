@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.Json;
 using AutoMapper;
 using Kwetter.Library.Messaging.Datatypes;
+using Microsoft.Extensions.Configuration;
 using RegisterOrchService.Core.Messaging;
 using RegisterOrchService.Core.OrchestrationModels.UserAuth;
 using RegisterOrchService.Core.OrchestrationModels.UserProfile;
@@ -11,13 +12,12 @@ using RegisterOrchService.Core.Services.Models;
 using RegisterOrchService.Core.ViewModel;
 using RegisterOrchService.Core.ViewModel.ResponseBody;
 
-
 namespace RegisterOrchService.Core.Services;
 
-public class RegisterOrchServiceCore(IMapper mapper, IMessageHandler handler) : IRegisterOrchService
+public class RegisterOrchServiceCore(IMapper mapper, IMessageHandler handler, IConfiguration configuration) : IRegisterOrchService
 {
-    private readonly string userAuthURL = "https://localhost:7272/User/create";
-    private readonly string userProfileURL = "https://localhost:7106/profiles/Create";
+    private readonly string userAuthURL = configuration["UserURL"];
+    private readonly string userProfileURL = configuration["UserProfileURL"];
 
     public async Task<bool> Register(RegisterRequestBody body)
     {
@@ -43,7 +43,7 @@ public class RegisterOrchServiceCore(IMapper mapper, IMessageHandler handler) : 
         string profileJson = JsonSerializer.Serialize(profile);
         var userContent = new StringContent(userJson, Encoding.UTF8, "application/json");
         var profileContent = new StringContent(profileJson, Encoding.UTF8, "application/json");
-        
+        UserMessageBody messageBody;
         using HttpClient client = new();
         {
             try
@@ -51,22 +51,41 @@ public class RegisterOrchServiceCore(IMapper mapper, IMessageHandler handler) : 
                 HttpResponseMessage authTask = await client.PostAsync(userAuthURL, userContent);
                 if (authTask.IsSuccessStatusCode)
                 {
-                    HttpResponseMessage profileTask = await client.PostAsync(userProfileURL, profileContent);
-                    if (profileTask.IsSuccessStatusCode)
+                    try
                     {
-                        return true;
+                        HttpResponseMessage profileTask = await client.PostAsync(userProfileURL, profileContent);
+                        if (profileTask.IsSuccessStatusCode)
+                        {
+                            return true;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                         messageBody = new()
+                        {
+                            ID = auth.UserID,
+                            CorreletionID = auth.CorreletionID,
+                            Status = Status.Failed.ToString()
+                        };
+                        handler.SendStatus(messageBody);
                     }
                 }
-                handler.SendStatus(new UserMessageBody() {CorreletionID = auth.CorreletionID, Status = Status.Failed, UserID = auth.UserID});
+
+                messageBody = new()
+                {
+                    ID = auth.UserID,
+                    CorreletionID = auth.CorreletionID,
+                    Status = Status.Failed.ToString()
+                };
+                handler.SendStatus(messageBody);
                 return false;
             }
             catch (Exception e)
             {
-                Console.WriteLine("error");
+                Console.WriteLine(e);
                 return false;
             }
         }
         return false;
     }
-    
 }

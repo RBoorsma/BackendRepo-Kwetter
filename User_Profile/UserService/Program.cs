@@ -23,7 +23,7 @@ builder.Services.AddTransient<IUserRepository, UserRepository>();
 builder.Services.AddTransient<IUserMessageHandler, UserMessageHandler>();
 builder.Services.AddTransient(typeof(IRabbitMQReceiver<>), typeof(RabbitMQReceiver<>));
 builder.Services.AddTransient<IRabbitMQPublisher, RabbitMQPublisher>();
-builder.Services.AddTransient<IMQConnection, MQConnection>();
+builder.Services.AddSingleton<IMQConnection, MQConnection>();
 builder.Services.AddDbContext<UserDbContext>();
 builder.Services.AddAutoMapper(typeof(UserProfile));
 
@@ -43,6 +43,8 @@ app.UseAuthorization();
 app.MapControllers();
 IUserMessageHandler handler =  app.Services.GetRequiredService<IUserMessageHandler>();
 handler.StartListening();
+
+
 
 app.Run();
 

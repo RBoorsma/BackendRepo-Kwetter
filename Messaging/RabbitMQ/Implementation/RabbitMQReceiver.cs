@@ -13,9 +13,11 @@ public class RabbitMQReceiver<T>(IMQConnection mqConnection) : IRabbitMQReceiver
 
     private IModel? channel;
 
+    [Obsolete("This method is not implemented", true)]
     public void StartListeningToMultiple(List<MessageQueue> queues, T requestbody, bool autoAck = true,
         bool seprateConsumer = true)
     {
+        throw new NotImplementedException();
         // StartConnection();
         // Console.WriteLine(" [*] Waiting for messages.");
         // if (seprateConsumer)
@@ -48,7 +50,7 @@ public class RabbitMQReceiver<T>(IMQConnection mqConnection) : IRabbitMQReceiver
         if (mqConnection.Connection is not { IsOpen: true } || channel == null)
             StartConnection();
 
-        Console.WriteLine(" [*] Waiting for messages.");
+        
         EventingBasicConsumer consumer = SetupListener();
         ConsumeChannel(queue, autoAck, consumer);
     }
@@ -56,8 +58,7 @@ public class RabbitMQReceiver<T>(IMQConnection mqConnection) : IRabbitMQReceiver
     {
         if (mqConnection.Connection is not { IsOpen: true } || channel == null)
             StartConnection();
-
-        Console.WriteLine(" [*] Waiting for messages.");
+        
         EventingBasicConsumer consumer = SetupListener();
         ConsumeChannel(queue, autoAck, consumer);
     }
@@ -66,7 +67,7 @@ public class RabbitMQReceiver<T>(IMQConnection mqConnection) : IRabbitMQReceiver
     {
         try
         {
-            IMQConnection connection = new MQConnection();
+            IMQConnection connection = new MQConnection(mqConnection.Configuration);
             mqConnection = connection;
             return true;
         }
@@ -85,30 +86,52 @@ public class RabbitMQReceiver<T>(IMQConnection mqConnection) : IRabbitMQReceiver
             var body = ea.Body.ToArray();
             var message = Encoding.UTF8.GetString(body);
             T? data = JsonSerializer.Deserialize<T>(message);
-            OnMessageReceived(data);
+            OnMessageReceived(data, ea.RoutingKey);
         };
         return consumer;
     }
 
     private void ConsumeChannel(string queue, bool autoAck, EventingBasicConsumer consumer)
     {
-        Console.WriteLine($"Consuming Channel {queue}");
-        channel.BasicConsume(queue: queue,
-            autoAck: autoAck,
-            consumer: consumer);
+        try
+        {
+            channel.BasicConsume(queue: queue,
+                autoAck: autoAck,
+                consumer: consumer);
+            Console.WriteLine($"Consuming Channel {queue}");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Queue {queue.ToString()} doenst exist, please declare your queues first");
+          
+        }
     }
+
+    
+   
     private void ConsumeChannel(MessageQueue queue, bool autoAck, EventingBasicConsumer consumer)
     {
-        Console.WriteLine($"Consuming Channel {queue.ToString()}");
-        channel.BasicConsume(queue: queue.ToString(),
-            autoAck: autoAck,
-            consumer: consumer);
+        try
+        {
+            channel.BasicConsume(queue: queue.ToString(),
+                autoAck: autoAck,
+                consumer: consumer);
+            Console.WriteLine($"Consuming Channel {queue.ToString()}");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Queue {queue.ToString()} doenst exist, please declare your queues first");
+            
+        }
+
+       
     }
 
 
-    private void OnMessageReceived(T data)
+    private void OnMessageReceived(T data, string routingkey)
     {
-        MessageReceived?.Invoke(this, new MessageReceivedEventArgs<T>(data));
+        Console.WriteLine("[x] Received {0}", data);
+        MessageReceived?.Invoke(this, new MessageReceivedEventArgs<T>(data, routingkey));
     }
 
     public void Dispose()

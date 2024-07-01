@@ -12,12 +12,12 @@ public class ProfileMessageReceiver : IReceiverHandler<DefaultMessageData>
 {
     
     private readonly IRabbitMQReceiver<DefaultMessageData> receiver;
-    private readonly IKweetProfilesService repository;
+    private readonly IKweetProfilesService service;
 
-    public ProfileMessageReceiver(IRabbitMQReceiver<DefaultMessageData> receiver)
+    public ProfileMessageReceiver(IRabbitMQReceiver<DefaultMessageData> receiver, IKweetProfilesService service)
     {
         this.receiver = receiver;
-        this.repository = repository;
+        this.service = service;
         this.receiver.MessageReceived += OnMessageReceived;
 
     }
@@ -25,21 +25,17 @@ public class ProfileMessageReceiver : IReceiverHandler<DefaultMessageData>
     public void OnMessageReceived(object? sender, MessageReceivedEventArgs<DefaultMessageData> eventArgs)
     {
         DefaultMessageData data = eventArgs.Data;
-        Profile profile = new(data.Id);
-        if (data.Type == "profile.created")
+        Profile profile = new(data.ID);
+        if (eventArgs.Routingkey == "profile.created")
         {
             
-            repository.CreateProfileAsync(profile);
+            service.CreateProfileAsync(profile);
         }
        
-        else if (data.Type == "profile.deleted")
+        else if (eventArgs.Routingkey == "profile.deleted")
         {
-            repository.RollbackOrDeleteProfile(profile);
+            service.RollbackOrDeleteProfile(profile);
         }
-
-
-
-        throw new NotImplementedException();
     }
 
     public void StartListening()

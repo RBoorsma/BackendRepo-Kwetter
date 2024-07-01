@@ -1,15 +1,30 @@
+using KweetService.Core.Messaging.Handler;
+using KweetService.Core.Service;
+using KweetService.DAL.Repository;
+using Kwetter.Library.Messaging.Datatypes;
+using Messaging.RabbitMQ;
+using Messaging.RabbitMQ.HandlerInterface;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddTransient<IKweetRepository, KweetRepository>();
+builder.Services.AddTransient<IKweetService, KweetServiceCore>();
+builder.Services.AddTransient<IRabbitMQPublisher, RabbitMQPublisher>();
+builder.Services.AddTransient(typeof(IRabbitMQReceiver<>), typeof(RabbitMQReceiver<>));
+builder.Services.AddTransient<IReceiverHandler<DefaultMessageData>, ProfileMessageReceiver>();
+builder.Services.AddTransient<IPublishHandler, MessagePublisher>();
+builder.Services.AddSingleton<IMQConnection, MQConnection>();
+builder.Services.AddTransient<IKweetProfilesService, KweetProfilesService>();
+builder.Services.AddTransient<IProfileRepository, ProfileRepository>();
 
 var configuration = builder.Configuration;
 var app = builder.Build();
 
-string connectionString = configuration["MongoDB"];
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -18,29 +33,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+IReceiverHandler<DefaultMessageData> handler =  app.Services.GetRequiredService<IReceiverHandler<DefaultMessageData>>();
+handler.StartListening();
+app.UseAuthorization();
+app.MapControllers();
 
-app.MapGet("/weatherforecast", () =>
-    {
-        var forecast = Enumerable.Range(1, 5).Select(index =>
-                new WeatherForecast
-                (
-                    DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    Random.Shared.Next(-20, 55),
-                    summaries[Random.Shared.Next(summaries.Length)]
-                ))
-            .ToArray();
-        return forecast;
-    })
-    .WithName("GetWeatherForecast")
-    .WithOpenApi();
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

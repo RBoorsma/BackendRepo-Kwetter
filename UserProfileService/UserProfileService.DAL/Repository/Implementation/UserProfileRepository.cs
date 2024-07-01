@@ -15,23 +15,22 @@ public class UserProfileRepository(UserProfileDbContext dbContext) : IUserProfil
     {
         if (await dbContext.UserProfiles.AnyAsync(x => x.Username == userProfile.Username))
         {
-             throw new UserAlreadyExistsException();
+            throw new UserAlreadyExistsException();
         }
 
-        using var transaction = dbContext.Database.BeginTransactionAsync();
+        await using var transaction = await dbContext.Database.BeginTransactionAsync();
+
+        try
         {
-            try
-            {
-                await dbContext.AddAsync(userProfile);
-                await dbContext.SaveChangesAsync();
-                await transaction.Result.CommitAsync();
-                return true;
-            }
-            catch (Exception e)
-            {
-                await transaction.Result.RollbackAsync();
-                return false;
-            }
+            await dbContext.AddAsync(userProfile);
+            await dbContext.SaveChangesAsync();
+            await transaction.CommitAsync();
+            return true;
+        }
+        catch (Exception e)
+        {
+            await transaction.RollbackAsync();
+            return false;
         }
     }
 
@@ -41,20 +40,19 @@ public class UserProfileRepository(UserProfileDbContext dbContext) : IUserProfil
         if (profile == null)
             throw new NoRecordFoundException();
 
-        using var transaction = dbContext.Database.BeginTransactionAsync();
+        await using var transaction = await dbContext.Database.BeginTransactionAsync();
+
+        try
         {
-            try
-            {
-                dbContext.Remove(profile);
-                await dbContext.SaveChangesAsync();
-                await transaction.Result.CommitAsync();
-                return true;
-            }
-            catch (Exception E)
-            {
-                await transaction.Result.RollbackAsync();
-                return false;
-            }
+            dbContext.Remove(profile);
+            await dbContext.SaveChangesAsync();
+            await transaction.CommitAsync();
+            return true;
+        }
+        catch (Exception E)
+        {
+            await transaction.RollbackAsync();
+            return false;
         }
     }
 }

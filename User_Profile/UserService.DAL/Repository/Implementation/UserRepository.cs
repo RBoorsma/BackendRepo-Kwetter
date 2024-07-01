@@ -8,27 +8,28 @@ namespace UserService.DAL.Repository;
 
 public class UserRepository(UserDbContext userDbContext) : IUserRepository
 {
+    
     public async Task<bool> Create(UserModel userModel)
     {
         if (await userDbContext.User.AnyAsync(x => x.Email == userModel.Email || x.Username == userModel.Username))
         {
             throw new UserAlreadyExistsException();
         }
-        using var transaction = userDbContext.Database.BeginTransactionAsync();
+
+        await using var transaction = await userDbContext.Database.BeginTransactionAsync();
+
+        try
         {
-            try
-            {
-                await userDbContext.AddAsync(userModel);
-                await userDbContext.SaveChangesAsync();
-                await transaction.Result.CommitAsync();
-            }
-            catch (Exception e)
-            {
-                await transaction.Result.RollbackAsync();
-                return false;
-            }
+            await userDbContext.AddAsync(userModel);
+            await userDbContext.SaveChangesAsync();
+            await transaction.CommitAsync();
+            return true;
         }
-        return true;
+        catch (Exception e)
+        {
+            await transaction.RollbackAsync();
+            return false;
+        }
     }
 
     public async Task<UserModel?> GetUserByLogin(UserModel userModel) //
@@ -36,18 +37,27 @@ public class UserRepository(UserDbContext userDbContext) : IUserRepository
         return await userDbContext.User.FirstOrDefaultAsync(x => x.Email == userModel.Email);
     }
 
-    public async Task<bool> RollBackOrDeleteUserAsync(UserModel userModel)
+    public async Task<bool> RollBackOrDeleteUserAsync(Guid guid)
     {
+        UserModel? userModel = await userDbContext.User.FirstOrDefaultAsync(x => x.UserID == guid);
+        if (userModel == null)
+        {
+            throw new NoRecordFoundException();
+        }
+
+        await using var transaction = await userDbContext.Database.BeginTransactionAsync();
+
         try
         {
-            userDbContext.User.Remove(userModel);
+            userDbContext.Remove(userModel);
             await userDbContext.SaveChangesAsync();
+            await transaction.CommitAsync();
             return true;
         }
         catch (Exception e)
         {
+            await transaction.RollbackAsync();
             return false;
         }
-        
     }
 }

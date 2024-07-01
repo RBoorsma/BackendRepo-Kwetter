@@ -12,14 +12,27 @@ public class KweetController(IKweetService kweetService) : ControllerBase
     [HttpPost("GetKweets")]
     public async Task<IActionResult> GetKweets([FromBody] Profile profileID)
     {
-        Collection<KweetModel?> kweets = await kweetService.GetKweetsByProfileAsync(profileID);
-        if (kweets.Count == 0)
+        List<KweetModel>? kweets = await kweetService.GetKweetsByProfileAsync(profileID);
+        if (kweets.Count != null)
         {
             return NotFound();
         }
-
+        
         return Ok(kweets);
     }
+    
+    [HttpPost("GetKweet")]
+    public async Task<IActionResult> GetKweet([FromBody] Guid guid)
+    {
+        KweetModel? kweet = await kweetService.GetKweetByID(guid);
+        if (kweet == null)
+        {
+            return NotFound();
+        }
+        return Ok(kweet); 
+    }
+    
+    
 
     [HttpPost("AddKweet")]
     public async Task<IActionResult> AddKweet([FromBody] KweetModel kweet)

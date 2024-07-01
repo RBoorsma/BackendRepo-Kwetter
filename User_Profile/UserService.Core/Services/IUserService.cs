@@ -11,5 +11,5 @@ public interface IUserService
     public Task<bool> Create(RegisterRequestBody model);
     public Task<LoginResponseBody?> GetByLogin(LoginRequestBody loginModel);
     public Task RollbackOrDeleteCreation(Guid UserID, Guid Correletion);
-    public Task RollbackOrDeleteCreation(Guid UserID);
+
 }

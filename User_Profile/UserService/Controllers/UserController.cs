@@ -1,5 +1,8 @@
 using Azure;
 using Isopoh.Cryptography.Argon2;
+using Kwetter.Library.Messaging.Datatypes;
+using Messaging.RabbitMQ;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using UserService.Core.Messaging;
 using UserService.Core.Services;
@@ -19,7 +22,6 @@ namespace UserService.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] RegisterRequestBody model)
         {
-            bool result = await userService.Create(model);
             if (await userService.Create(model))
                 return Created();
             return StatusCode(500);
@@ -38,5 +40,6 @@ namespace UserService.Controllers
 
             return NotFound();
         }
+     
     }
 }

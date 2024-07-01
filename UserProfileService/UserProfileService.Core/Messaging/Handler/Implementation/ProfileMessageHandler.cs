@@ -8,34 +8,42 @@ using UserProfileService.Core.ViewModel.ResponseBody;
 
 namespace UserProfileService.Core.Messaging.Handler;
 
-public class UserMessageHandler : IMessageHandler
+public class ProfileMessageHandler : IMessageHandler
 {
     private readonly IServiceProvider _serviceProvider;
     
-    private readonly IRabbitMQReceiver<UserMessageBody> _receiver;
+    private readonly IRabbitMQReceiver<MessagingBody> _receiver;
 
     private readonly PublishDataBuilder _messageBuilder = new();
     private readonly IRabbitMQPublisher _publisher;
 //TODO Look at the receiver, it needs a new <T> (Maybe we can remove it later but dont make it a priority)
-    public UserMessageHandler(IServiceProvider provider, IRabbitMQPublisher publisher, IRabbitMQReceiver<UserMessageBody> receiver)
+    public ProfileMessageHandler(IServiceProvider provider, IRabbitMQPublisher publisher, IRabbitMQReceiver<MessagingBody> receiver)
     {
         _serviceProvider = provider;
         this._receiver = receiver;
         this._publisher = publisher;
+        DeclareQueue();
         
         _receiver.MessageReceived += OnMessageReceived;
       
     }
-    
-
-    public void SendStatus(UserMessageBody body)
+    public void SendStatusCustom(MessagingBody body, string key)
     {
+        if(body.CorreletionID == Guid.Empty)
+            body.CorreletionID = Guid.NewGuid();
         IPublishData
-            data = _messageBuilder.setBody(new MessageContainer<UserMessageBody>(body)).setRoutingKey(RoutingKey.Registration).build();
+            data = _messageBuilder.setBody(new MessageContainer<MessagingBody>(body)).setCustomRoutingKey(key).build();
         _publisher.SendMessage(data);
     }
 
-    private async void OnMessageReceived(object? sender, MessageReceivedEventArgs<UserMessageBody> eventArgs)
+    public void SendStatus(MessagingBody body, RoutingKey routingKey = RoutingKey.Registration)
+    {
+        IPublishData
+            data = _messageBuilder.setBody(new MessageContainer<MessagingBody>(body)).setRoutingKey(routingKey).build();
+        _publisher.SendMessage(data);
+    }
+
+    private async void OnMessageReceived(object? sender, MessageReceivedEventArgs<MessagingBody> eventArgs)
     {
         Console.WriteLine(eventArgs.Data.Status);
         IServiceScopeFactory scopeFactory = _serviceProvider.GetRequiredService<IServiceScopeFactory>();
@@ -50,14 +58,25 @@ public class UserMessageHandler : IMessageHandler
             }
             else if (eventArgs.Data?.Status == Status.Failed.ToString())
             {
-                await userProfileService.RollbackOrDeleteCreation(eventArgs.Data.UserID, eventArgs.Data.CorreletionID);
+                await userProfileService.RollbackOrDeleteCreation(eventArgs.Data.ID, eventArgs.Data.CorreletionID);
                 
             }
         }
     }
 
+    private void DeclareQueue()
+    {
+        List<string> queues = new()
+        {
+            "profile.created"
+        };
+        foreach (string queue in queues)
+        {
+            _publisher.DeclareQueues(queue);
+        }
+    }
     public void StartListening()
     {
-        _receiver.StartListeningTo(MessageQueue.Registration);
+      //  _receiver.StartListeningTo(MessageQueue.Registration);
     }
 }

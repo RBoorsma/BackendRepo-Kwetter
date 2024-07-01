@@ -6,7 +6,10 @@ using RegisterOrchService.Core.Services.Models;
 
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Configuration.SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile($"appsettings{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+    .AddEnvironmentVariables();
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddControllers();
@@ -16,7 +19,7 @@ builder.Services.AddTransient<IRegisterOrchService, RegisterOrchServiceCore>();
 builder.Services.AddTransient<IRabbitMQPublisher, RabbitMQPublisher>();
 builder.Services.AddTransient(typeof(IRabbitMQReceiver<>), typeof(RabbitMQReceiver<>));
 builder.Services.AddTransient<IMessageHandler, MessageHandler>();
-builder.Services.AddTransient<IMQConnection, MQConnection>();
+builder.Services.AddSingleton<IMQConnection, MQConnection>();
 builder.Services.AddAutoMapper(typeof(OrchestrationProfile));
 var app = builder.Build();
 

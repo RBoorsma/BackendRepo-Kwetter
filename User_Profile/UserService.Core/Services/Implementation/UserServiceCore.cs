@@ -25,11 +25,18 @@ public class UserServiceCore(
         {
             model.Password = Argon2.Hash(model.Password);
             UserModel userModel = mapper.Map<UserModel>(model);
-            return await userRepository.Create(userModel);
-            
+
+            if (await userRepository.Create(userModel))
+                return true;
+
+            return false;
         }
-        catch
+        catch (Exception e)
         {
+            if (e is UserAlreadyExistsException)
+            {
+            }
+
             return false;
         }
     }
@@ -46,13 +53,17 @@ public class UserServiceCore(
         return null;
     }
 
-    public Task RollbackOrDeleteCreation(Guid UserID, Guid Correletion)
+    public async Task RollbackOrDeleteCreation(Guid UserID, Guid Correletion)
     {
-        throw new NotImplementedException();
-    }
-
-    public Task RollbackOrDeleteCreation(Guid UserID)
-    {
-        throw new NotImplementedException();
+        try
+        {
+            Task<bool> result = userRepository.RollBackOrDeleteUserAsync(UserID);
+            if (await result)
+            {
+            }
+        }
+        catch (NoRecordFoundException exception)
+        {
+        }
     }
 }

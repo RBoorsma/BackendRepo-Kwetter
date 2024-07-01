@@ -13,53 +13,40 @@ public class UserProfileServiceCore(
     IMapper mapper,
     IMessageHandler messageHandler) : IUserProfileService
 {
-    public async Task Create(NewProfileRequestBody body)
+    public async Task<bool> Create(NewProfileRequestBody body)
     {
-        UserMessageBody messageData = new();
+        MessagingBody messageData = new();
         try
         {
             if (await userRepository.Create(mapper.Map<UserProfile>(body)))
             {
-                messageData = mapper.Map<UserMessageBody>(body);
+                messageData.ID = body.UserID;
                 messageData.Status = Status.Created.ToString();
-            }
-            else
-            {
-
-                messageData.Status = Status.Failed.ToString();
-                
+                messageHandler.SendStatusCustom(messageData, "profile.created");
+                return true;
             }
 
+            
+            return false;
         }
-        catch
+        catch(Exception)
         {
-            messageData.Status = Status.Failed.ToString();
+            return false;
         }
-        messageHandler.SendStatus(messageData);
-
-        
-        
-       
     }
 
-    public async Task RollbackOrDeleteCreation(Guid UserID)
-    {
-        await RollbackOrDeleteCreation(UserID, Guid.NewGuid());
-    }
 
     public async Task RollbackOrDeleteCreation(Guid UserID, Guid Correletion)
     {
-        Task<bool> result = userRepository.RollBackOrDeleteAsync(UserID);
-
-        UserMessageBody messageData = new()
+        try
         {
-            UserID = UserID,
-            CorreletionID = Correletion
-        };
-        if (await result)
-            messageData.Status = Status.Removed.ToString();
-
-        messageData.Status = Status.Failed.ToString();
-        messageHandler.SendStatus(messageData);
+            Task<bool> result = userRepository.RollBackOrDeleteAsync(UserID);
+            if (await result)
+            {
+            }
+        }
+        catch (Exception)
+        {
+        }
     }
 }

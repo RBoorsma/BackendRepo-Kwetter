@@ -15,9 +15,10 @@ public interface IKweetRepository
     Task RemoveKweetAsync(KweetModel kweet);
   
 
-   Task<KweetModel> GetKweetAsync(KweetModel kweet);
-   
-   
+   Task<KweetModel?> GetKweetAsync(Guid guid);
+   Task<List<KweetModel>?> GetKweetsByProfileAsync(Profile profile);
+
+
 
 
 

@@ -1,25 +1,27 @@
-#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
-#Depending on the operating system of the host machines(s) that will build or run the containers, the image specified in the FROM statement may need to be changed.
-#For more information, please see https://aka.ms/containercompat
-
-FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
+﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+USER $APP_UID
 WORKDIR /app
-EXPOSE 80
-EXPOSE 443
+EXPOSE 8080
+EXPOSE 8081
 
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Backend_Kwetter/Backend_Kwetter.csproj", "Backend_Kwetter/"]
-RUN dotnet restore "Backend_Kwetter/Backend_Kwetter.csproj"
+COPY ["User_Profile/UserService/UserService.csproj", "User_Profile/UserService/"]
+COPY ["User_Profile/UserService.Core/UserService.Core.csproj", "User_Profile/UserService.Core/"]
+COPY ["Messaging/Messaging.csproj", "Messaging/"]
+COPY ["User_Profile/UserService.DAL/UserService.DAL.csproj", "User_Profile/UserService.DAL/"]
+RUN dotnet restore "User_Profile/UserService/UserService.csproj"
 COPY . .
-WORKDIR "/src/Backend_Kwetter"
-RUN dotnet build "Backend_Kwetter.csproj" -c Release -o /app/build
+WORKDIR "/src/User_Profile/UserService"
+RUN dotnet build "UserService.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "Backend_Kwetter.csproj" -c Release -o /app/publish
+ARG BUILD_CONFIGURATION=Release
+RUN dotnet publish "UserService.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Backend_Kwetter.dll"]
+ENTRYPOINT ["dotnet", "UserService.dll"]

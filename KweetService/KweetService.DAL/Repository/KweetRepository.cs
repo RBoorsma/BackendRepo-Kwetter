@@ -3,27 +3,40 @@ using KweetService.DAL.Model;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using Microsoft.Extensions.Configuration;
+using Microsoft.VisualBasic;
 
 namespace KweetService.DAL.Repository;
 
-public class KweetRepository(IConfiguration configuration) : IKweetRepository
+public class KweetRepository : IKweetRepository
 {
-    
-    private MongoClient client = new MongoClient(configuration["MongoDB"]);
+    private MongoClient client;
+    private IMongoDatabase database;
+    private IMongoCollection<KweetModel> collection;
+    public KweetRepository(IConfiguration configuration)
+    {
+       
+        client = new (Environment.GetEnvironmentVariable("MongoDB"));
+        IMongoDatabase database = client.GetDatabase("Kweets");
+        collection = database.GetCollection<KweetModel>("Kweets");
+    }
+   
 
+    
+    
+    
+    
     public Task AddKweetAsync(KweetModel kweet)
     {
-        IMongoDatabase database = client.GetDatabase("Kweets");
-        IMongoCollection<KweetModel> collection = database.GetCollection<KweetModel>("Kweets");
+       
         collection.InsertOneAsync(kweet);
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     public Task UpdateKweetAsync(KweetModel kweet)
     {
         IMongoDatabase database = client.GetDatabase("Kweets");
         IMongoCollection<KweetModel> collection = database.GetCollection<KweetModel>("Kweets");
-        collection.ReplaceOneAsync(x => x.KweetID == kweet.KweetID, kweet);
+        collection.ReplaceOneAsync(x => x._id == kweet._id, kweet);
         throw new NotImplementedException();
     }
 
@@ -31,17 +44,20 @@ public class KweetRepository(IConfiguration configuration) : IKweetRepository
     {
         IMongoDatabase database = client.GetDatabase("Kweets");
         IMongoCollection<KweetModel> collection = database.GetCollection<KweetModel>("Kweets");
-        collection.DeleteOneAsync(x => x.KweetID == kweet.KweetID);
+        collection.DeleteOneAsync(x => x._id == kweet._id);
         throw new NotImplementedException();
     }
-    public Task<KweetModel> GetKweetAsync(KweetModel kweet)
+    public async Task<KweetModel?> GetKweetAsync(Guid guid)
     {
-        IMongoDatabase database = client.GetDatabase("Kweets");
-        IMongoCollection<KweetModel> collection = database.GetCollection<KweetModel>("Kweets");
-        collection.FindAsync(x => x.KweetID == kweet.KweetID);
-        throw new NotImplementedException();
+        return await collection.Find(x => x._id == guid).FirstOrDefaultAsync();
+        
     }
-    
-    
+    public async Task<List<KweetModel>?> GetKweetsByProfileAsync(Profile profile)
+    {
+        return await collection.Find(x => x.ProfileID == profile._id).ToListAsync();
+       
+
+    }
     
 }
+  

@@ -5,7 +5,7 @@ namespace RegisterOrchService.Core.Services.Models;
 
 public class UserMessageBody
 {
-    public Guid UserID { get; set; }
+    public Guid ID { get; set; }
     public Guid CorreletionID { get; set; }
-    public Status Status { get; set; }
+    public string Status { get; set; }
 }

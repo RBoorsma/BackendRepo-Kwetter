@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>ee21aa12-9874-4239-a24d-5df6e9d708c9</UserSecretsId>
-    <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <RootNamespace>Backend_Kwetter</RootNamespace>
     <LangVersion>12</LangVersion>
   </PropertyGroup>
@@ -30,6 +30,12 @@
     <_ContentIncludedByDefault Remove="UserService.DAL\obj\project.packagespec.json" />
     <_ContentIncludedByDefault Remove="UserService.DAL\obj\User.csproj.nuget.dgspec.json" />
     <_ContentIncludedByDefault Remove="UserService.DAL\obj\UserService.DAL.csproj.nuget.dgspec.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\..\.dockerignore">
+      <Link>.dockerignore</Link>
+    </Content>
   </ItemGroup>
 
 </Project>

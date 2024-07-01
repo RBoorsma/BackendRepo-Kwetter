@@ -1,17 +1,18 @@
+using KweetService.DAL.Model;
+using KweetService.DAL.Repository;
+
 namespace KweetService.Core.Service;
 
-public class KweetProfilesService
+public class KweetProfilesService(IProfileRepository repository) : IKweetProfilesService
 {
-    public Task RollbackOrDeleteProfile(Guid profileID)
+    public Task RollbackOrDeleteProfile(Profile profile)
     {
         throw new NotImplementedException();
     }
 
-    public Task CreateProfileAsync(Guid profileID)
+    public Task CreateProfileAsync(Profile profile)
     {
-        throw new NotImplementedException();
+        repository.addProfile(profile);
+        return Task.CompletedTask;
     }
-    
-    
-    
 }

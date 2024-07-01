@@ -82,20 +82,4 @@ jobs:
           .\.sonar\scanner\dotnet-sonarscanner begin /k:"kwetter-org_kwetter" /o:"kwetter-org" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
           dotnet build
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
-  Snyk-Vulnerability-Scan:
-    needs: build
-    runs-on: ubuntu-latest
-    steps: 
-        - uses: actions/checkout@master
-        - name: Setup .NET
-          uses: actions/setup-dotnet@v4
-        - name: Restore dependencies
-          run: dotnet restore
-        - name: Run Synk for vulnerability on libraries
-          uses: snyk/actions/dotnet@master
-          env:
-            SNYK_TOKEN: ${{ secrets.SNYK_token }}
-          with:
-            command: monitor
-        
     

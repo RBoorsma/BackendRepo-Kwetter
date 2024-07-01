@@ -86,7 +86,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps: 
-        - uses: action/checkout@master
+        - uses: actions/checkout@master
         - name: Run Synk for vulnerability on libraries
           uses: snyk/actions/dotnet@master
           env:

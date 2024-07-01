@@ -90,7 +90,7 @@ jobs:
         - name: Setup .NET
           uses: actions/setup-dotnet@v4
         - name: Restore dependencies
-          run: dotnet restore ./path/to/your.sln
+          run: dotnet restore
         - name: Run Synk for vulnerability on libraries
           uses: snyk/actions/dotnet@master
           env:

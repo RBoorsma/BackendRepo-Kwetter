@@ -2,6 +2,9 @@ name: OSV-Scanner PR Scan
 
 # Change "main" to your default branch if you use a different name, i.e. "master"
 on:
+  push:
+    branches:
+      - main
   pull_request:
     branches: [main]
   merge_group:

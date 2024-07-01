@@ -1,0 +1,59 @@
+services:
+  kweetservice:
+    image: kweetservice
+    environment:
+      - MongoDB=${MongoDB}
+      - rabbitmq=${rabbitmq}
+    build:
+      context: .
+      dockerfile: KweetService/KweetService/KweetService/Dockerfile
+    ports:
+      - 5235:8080
+      - 7072:8081
+
+  registerorchservice:
+    image: registerorchservice
+    environment:
+      - MySQL=${MySQL}
+      - rabbitmq=${rabbitmq}
+    build:
+      context: .
+      dockerfile: RegisterOrchestration/RegisterOrchService/Dockerfile
+    ports:
+      - 5254:8080
+      - 7138:8081
+    networks:
+      - kwetter-network
+
+  userprofileservice:
+    image: userprofileservice
+    environment:
+      - MySQL=${MySQL}
+      - rabbitmq=${rabbitmq}
+    build:
+      context: .
+      dockerfile: UserProfileService/UserProfileService/Dockerfile
+    ports:
+      - 5193:8080
+      - 7106:8081
+    networks:
+      - kwetter-network
+
+  userservice:
+    image: userservice
+    environment:
+      - MySQL=${MySQL}
+      - rabbitmq=${rabbitmq}
+    build:
+      context: .
+      dockerfile: User_Profile/UserService/Dockerfile
+    ports:
+      - 5272:8080
+      - 7272:8081
+    networks:
+      - kwetter-network
+
+
+networks:
+  kwetter-network:
+    driver: bridge

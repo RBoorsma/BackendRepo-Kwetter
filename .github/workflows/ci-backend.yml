@@ -91,5 +91,7 @@ jobs:
           uses: snyk/actions/dotnet@master
           env:
             ${{secrets.SNYK_token}}
+          with:
+            command: monitor
         
     

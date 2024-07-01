@@ -12,11 +12,12 @@ on:
 jobs:
   build:
     name: Build, Test, and Analyze
-    runs-on: ubuntu-latest
+    runs-on: ${{matrix.os}}
 
     strategy:
       matrix:
         dotnet-version: [8.0.x]
+        os: [ubuntu-latest]
 
     steps:
       - name: Checkout the Code
@@ -37,6 +38,13 @@ jobs:
         run: dotnet test --no-build --verbosity normal
 
       # Add steps for SonarCloud analysis
+  SAST:
+    runs-on: ${{matrix.os}}
+    strategy:
+      matrix:
+        dotnet-version: [8.0.x]
+        os: [ubuntu-latest]
+    steps:
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:

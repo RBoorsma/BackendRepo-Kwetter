@@ -90,7 +90,7 @@ jobs:
         - name: Run Synk for vulnerability on libraries
           uses: snyk/actions/dotnet@master
           env:
-            ${{secrets.SNYK_token}}
+            ${{ secrets.SNYK_token }}
           with:
             command: monitor
         

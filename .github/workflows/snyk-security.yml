@@ -42,7 +42,7 @@ jobs:
 
       - name: Run Snyk Open Source (SCA)
         run: |
-          .\snyk.exe test
+          .\snyk.exe test --all-projects
 
       - name: Create Snyk Open Source (SCA) snapshot
         run: |

@@ -39,6 +39,7 @@ jobs:
 
       # Add steps for SonarCloud analysis
   SAST:
+    needs: build
     runs-on: ${{matrix.os}}
     strategy:
       matrix:

@@ -39,6 +39,7 @@ jobs:
 
       # Add steps for SonarCloud analysis
   SAST:
+    name: Sonarcloud Scan
     needs: build
     runs-on: ${{matrix.os}}
     strategy:
@@ -83,9 +84,18 @@ jobs:
           dotnet build
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
   Docker:
+    name: Docker Images
     needs: SAST
-    runs-on: ubuntu-latest
+    runs-on: ${{matrix.os}}
+
+    strategy:
+      matrix:
+        dotnet-version: [8.0.x]
+        os: [ubuntu-latest]
+
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Setup docker compose
         run: docker-compose -v
       - name: build docker image
@@ -96,7 +106,18 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
       - name: Tag and Push UserService
-        run: |    
+        run: |
           docker tag userservice:latest rboorsma/kwetter:userservice-latest
-          docker push rboorsma/rboorsma:userservice-latest
-    
+          docker push rboorsma/kwetter:userservice-latest
+      - name: Tag and Push UserProfileService
+        run: |
+          docker tag userprofileservice:latest rboorsma/kwetter:userprofileservice-latest
+          docker push rboorsma/kwetter:userprofileservice-latest
+      - name: Tag and Push RegisterOrchService
+        run: |
+          docker tag registerorchservice:latest rboorsma/kwetter:registerorch-latest
+          docker push rboorsma/kwetter:registerorch-latest
+      - name: Tag and Push KweetService
+        run: |
+          docker tag kweetservice:latest rboorsma/kwetter:kweetservice-latest
+          docker push rboorsma/kwetter:kweetservice-latest

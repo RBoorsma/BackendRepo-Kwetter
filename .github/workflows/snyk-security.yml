@@ -39,8 +39,13 @@ jobs:
 
       - name: Run Snyk Open Source (SCA)
         run: |
-          .\snyk.exe test --sarif-file=results.sarif -all-projects --severity-threshold=critical
+          .\snyk.exe test --sarif-file=results.sarif -all-projects --severity-threshold=medium --sarif-file-output=./results.sarif
         continue-on-error: true
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          # Path to SARIF file relative to the root of the repository
+          sarif_file: results.sarif
 
       - name: Create Snyk Open Source (SCA) snapshot
         run: |

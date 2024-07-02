@@ -22,7 +22,6 @@ public class ProfileMessageHandler : IMessageHandler
         _serviceProvider = provider;
         this._receiver = receiver;
         this._publisher = publisher;
-        DeclareQueue();
         
         _receiver.MessageReceived += OnMessageReceived;
       
@@ -64,7 +63,7 @@ public class ProfileMessageHandler : IMessageHandler
         }
     }
 
-    private void DeclareQueue()
+    public void DeclareQueue()
     {
         List<string> queues = new()
         {

@@ -14,7 +14,7 @@ public class MessageHandler : IMessageHandler
     private readonly IServiceProvider _serviceProvider;
 
     private MQConnection _connection;
-    private readonly IRabbitMQReceiver<UserMessageBody> _receiver;
+   // private readonly IRabbitMQReceiver<UserMessageBody> _receiver;
 
     private readonly PublishDataBuilder _messageBuilder = new();
     private readonly IRabbitMQPublisher _publisher;
@@ -22,10 +22,10 @@ public class MessageHandler : IMessageHandler
     public MessageHandler(IServiceProvider provider, IRabbitMQPublisher publisher, IRabbitMQReceiver<UserMessageBody> receiver)
     {
         _serviceProvider = provider;
-        this._receiver = receiver;
+       // this._receiver = receiver;
         this._publisher = publisher;
         
-        _receiver.MessageReceived += OnMessageReceived;
+       // _receiver.MessageReceived += OnMessageReceived;
       
     }
     
@@ -48,6 +48,7 @@ public class MessageHandler : IMessageHandler
 
     public void StartListening()
     {
-        _receiver.StartListeningTo(MessageQueue.Registration);
+        throw new NotImplementedException();
+        //  _receiver.StartListeningTo(MessageQueue.Registration);
     }
 }

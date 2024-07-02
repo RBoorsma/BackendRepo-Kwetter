@@ -11,4 +11,5 @@ public interface IMessageHandler
     void SendStatusCustom(MessagingBody body, string key);
     void SendStatus(MessagingBody body, RoutingKey routingKey = RoutingKey.Registration);
     public void StartListening();
+    void DeclareQueue();
 }

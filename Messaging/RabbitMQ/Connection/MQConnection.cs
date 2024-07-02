@@ -27,12 +27,14 @@ public class MQConnection : IMQConnection
 
     public void CloseConnection()
     {
+        Console.WriteLine("Closed connection with rabbitmq");
         if (Connection is not {IsOpen: false})
             Connection.Close();
     }
 
     public void OpenConnection()
     {
+        Console.WriteLine("Opened connection with rabbitmq");
         if (Connection is not {IsOpen: true})
             Connection = Factory.CreateConnection();
     }

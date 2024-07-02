@@ -44,6 +44,7 @@ app.MapControllers();
 
 IMessageHandler handler =  app.Services.GetRequiredService<IMessageHandler>();
 handler.StartListening();
+handler.DeclareQueue();
 
 
 

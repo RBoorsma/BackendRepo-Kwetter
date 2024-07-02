@@ -33,7 +33,14 @@ public class UserProfileRepository(UserProfileDbContext dbContext) : IUserProfil
             return false;
         }
     }
+    public async Task<UserProfile> GetProfile(UserProfile body)
+    {
+        UserProfile? profile = await dbContext.UserProfiles.FirstOrDefaultAsync(x => x.Username == body.Username);
+        if (profile == null)
+            throw new NoRecordFoundException();
 
+        return profile;
+    }
     public async Task<bool> RollBackOrDeleteAsync(Guid guid)
     {
         UserProfile? profile = await dbContext.UserProfiles.FirstOrDefaultAsync(x => x.UserID == guid);

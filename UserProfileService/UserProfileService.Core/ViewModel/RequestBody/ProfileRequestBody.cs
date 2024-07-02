@@ -2,5 +2,5 @@
 
 public class ProfileRequestBody
 {
-    public Guid UserID { get; set; }
+    public string Username { get; set; }
 }

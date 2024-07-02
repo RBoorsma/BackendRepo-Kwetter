@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using KweetService.Core.Messaging.ViewModels;
 using KweetService.Core.Service;
 using KweetService.DAL.Model;
 using Microsoft.AspNetCore.Mvc;
@@ -10,9 +11,9 @@ namespace KweetService.Controllers;
 public class KweetController(IKweetService kweetService) : ControllerBase
 {
     [HttpPost("GetKweets")]
-    public async Task<IActionResult> GetKweets([FromBody] Profile profileID)
+    public async Task<IActionResult> GetKweets([FromBody] ProfileRequestBody profile)
     {
-        List<KweetModel>? kweets = await kweetService.GetKweetsByProfileAsync(profileID);
+        List<KweetModel>? kweets = await kweetService.GetKweetsByProfileAsync(profile);
         if (kweets.Count != null)
         {
             return NotFound();

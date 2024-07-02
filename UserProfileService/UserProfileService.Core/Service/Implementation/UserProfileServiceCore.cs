@@ -34,7 +34,19 @@ public class UserProfileServiceCore(
             return false;
         }
     }
-
+    public async Task<ProfileResponseBody?> GetProfile(ProfileRequestBody body)
+    {
+        try
+        {
+            
+            UserProfile profile = await userRepository.GetProfile(mapper.Map<UserProfile>(body));
+            return mapper.Map<ProfileResponseBody>(profile);
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+    }
 
     public async Task RollbackOrDeleteCreation(Guid UserID, Guid Correletion)
     {

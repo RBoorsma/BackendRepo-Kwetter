@@ -8,5 +8,6 @@ public interface IUserProfileService
     Task<bool> Create(NewProfileRequestBody body);
     Task RollbackOrDeleteCreation(Guid UserID, Guid Correlation);
     Task<ProfileResponseBody?> GetProfile(ProfileRequestBody body);
+    Task<ProfileResponseBody> LoadTestDemo(ProfileRequestBody body);
 
 }

@@ -1,0 +1,152 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/kweet/getkweets",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5235
+        }
+      ],
+      "UpstreamPathTemplate": "/api/Kweet/getkweets",
+      "UpstreamHttpMethod": [ "POST" ],
+      "SwaggerKey": "KweetService.API"
+    },
+    {
+      "DownstreamPathTemplate":  "/kweet/getkweet",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5235
+        }
+      ],
+      "UpstreamPathTemplate": "/api/kweet/getkweet",
+      "UpstreamHttpMethod": [ "POST" ],
+      "SwaggerKey": "KweetService.API"
+    },
+    {
+      "DownstreamPathTemplate":  "/kweet/addkweet",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5235
+        }
+      ],
+      "UpstreamPathTemplate": "/api/kweet/addkweet",
+      "UpstreamHttpMethod": [ "POST" ],
+      "SwaggerKey": "KweetService.API"
+    },
+    {
+      "DownstreamPathTemplate":  "/register/newuser",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5254
+        }
+      ],
+      "UpstreamPathTemplate": "/api/register/newuser",
+      "UpstreamHttpMethod": [ "POST" ],
+      "SwaggerKey": "RegisterOrch.API"
+    },
+    {
+      "DownstreamPathTemplate":  "/profiles/create",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5193
+        }
+      ],
+      "UpstreamPathTemplate": "/api/profiles/getprofile",
+      "UpstreamHttpMethod": [ "POST" ],
+      "SwaggerKey": "UserProfileService.API"
+    },
+    {
+      "DownstreamPathTemplate":  "/profiles/getprofile",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5193
+        }
+      ],
+      "UpstreamPathTemplate": "/api/profiles/create",
+      "UpstreamHttpMethod": [ "POST" ],
+      "SwaggerKey": "UserProfileService.API"
+    },
+    {
+      "DownstreamPathTemplate":  "/user/create",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5272
+        }
+      ],
+      "UpstreamPathTemplate": "/api/user/create",
+      "UpstreamHttpMethod": [ "POST" ],
+      "SwaggerKey": "UserService.API"
+    },
+    {
+      "DownstreamPathTemplate":  "/user/getbylogin",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5272
+        }
+      ],
+      "UpstreamPathTemplate": "/api/user/getbylogin",
+      "UpstreamHttpMethod": [ "POST" ],
+      "SwaggerKey": "UserService.API"
+    }
+  ],
+  "GlobalConfiguration": {
+  },
+  "SwaggerEndPoints": [
+    {
+      "Key": "UserService.API",
+      "Config": [
+        {
+          "Name": "UserService API",
+          "Version": "v1",
+          "Url": "http://localhost:5272/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "KweetService.API",
+      "Config": [
+        {
+          "Name": "KweetService API",
+          "Version": "v1",
+          "Url": "http://localhost:5235/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "RegisterOrch.API",
+      "Config": [
+        {
+          "Name": "RegisterOrch API",
+          "Version": "v1",
+          "Url": "http://localhost:5254/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "UserProfileService.API",
+      "Config": [
+        {
+          "Name": "UserServiceServer API",
+          "Version": "v1",
+          "Url": "http://localhost:5193/swagger/v1/swagger.json"
+        }
+      ]
+    }
+  ]
+}

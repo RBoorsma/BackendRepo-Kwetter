@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Runtime;
+using AutoMapper;
 using Kwetter.Library.Messaging.Datatypes;
 using UserProfileService.Core.Messaging.Handler;
 using UserProfileService.Core.Messaging.Models;
@@ -33,6 +34,19 @@ public class UserProfileServiceCore(
         {
             return false;
         }
+    }
+    public async Task<ProfileResponseBody> LoadTestDemo(ProfileRequestBody body)
+    {
+        UserProfile user = mapper.Map<UserProfile>(body);
+        ProfileResponseBody profile = mapper.Map<ProfileResponseBody>(user);
+        for(int i = 0; i < 10; i++)
+        {
+            profile.id = Guid.NewGuid();
+        }
+        profile.firstName = "Load";
+        profile.lastName = "Test";
+        return profile;
+
     }
     public async Task<ProfileResponseBody?> GetProfile(ProfileRequestBody body)
     {

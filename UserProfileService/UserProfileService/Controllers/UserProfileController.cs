@@ -24,6 +24,22 @@ public class UserProfileController(IUserProfileService userProfileService) : Con
             return StatusCode(500);
         }
     }
+    [HttpPost("LoadTest")]
+    public async Task<IActionResult> LoadTestDemo(ProfileRequestBody body)
+    {
+        try
+        {
+            ProfileResponseBody? profile = await userProfileService.LoadTestDemo(body);
+            if (profile != null)
+                return Ok(profile);
+
+            return NotFound();
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500);
+        }
+    }
 
     [HttpPost("GetProfile")]
     public async Task<IActionResult> GetProfile(ProfileRequestBody body)

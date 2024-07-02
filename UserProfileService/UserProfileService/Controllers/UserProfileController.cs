@@ -32,7 +32,7 @@ public class UserProfileController(IUserProfileService userProfileService) : Con
         {
             ProfileResponseBody? profile = await userProfileService.GetProfile(body);
             if (profile != null)
-                return Ok();
+                return Ok(profile);
 
             return NotFound();
         }

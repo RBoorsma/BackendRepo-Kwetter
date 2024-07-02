@@ -46,6 +46,8 @@ public class RabbitMQPublisher(IMQConnection mqConnection) : IRabbitMQPublisher
         channel.QueueDeclare(queue: queue, durable: durable,
             exclusive: exclusive, autoDelete: autoDelete,
             arguments: null);
+        
+        mqConnection.CloseConnection();
 
         return true;
     }
@@ -76,10 +78,12 @@ public class RabbitMQPublisher(IMQConnection mqConnection) : IRabbitMQPublisher
                 basicProperties: properties, body: body);
             Console.WriteLine(
                 $"Send {publishData.data} to {mqConnection.ToString()} with Correlation ID: {publishData.CorreletionID.ToString()}");
+            mqConnection.CloseConnection();
             return true;
         }
         catch (Exception)
         {
+            mqConnection.CloseConnection();
             Type test = publishData.data.GetType();
             PropertyInfo[] yes = test.GetProperties();
         }

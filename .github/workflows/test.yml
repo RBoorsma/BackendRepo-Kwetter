@@ -23,7 +23,7 @@ jobs:
       - name: Setup docker compose
         run: docker-compose -v
       - name: build docker image
-        run: docker-compose build
+        run: docker-compose up -d --build
       - name: Login to Docker
         uses: docker/login-action@v3
         with:
@@ -31,7 +31,6 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
       - name: Tag and Push UserService
         run: |
-          ls
           docker tag userservice:latest rboorsma/kwetter:userservice-latest
           docker push rboorsma/rboorsma:userservice-latest
     

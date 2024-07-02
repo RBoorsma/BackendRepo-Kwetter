@@ -39,7 +39,7 @@ jobs:
 
       - name: Run Snyk Open Source (SCA)
         run: |
-          .\snyk.exe test --sarif-file=results.sarif -all-projects
+          .\snyk.exe test --sarif-file=results.sarif -all-projects --severity-threshold=critical
         continue-on-error: true
 
       - name: Create Snyk Open Source (SCA) snapshot

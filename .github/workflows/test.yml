@@ -20,6 +20,8 @@ jobs:
         os: [ubuntu-latest]
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Setup docker compose
         run: docker-compose -v
       - name: build docker image
@@ -32,5 +34,5 @@ jobs:
       - name: Tag and Push UserService
         run: |
           docker tag userservice:latest rboorsma/kwetter:userservice-latest
-          docker push rboorsma/rboorsma:userservice-latest
+          docker push rboorsma/kwetter:userservice-latest
     

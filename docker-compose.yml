@@ -10,8 +10,9 @@ services:
     ports:
       - 5235:8080
       - 7072:8081
-   networks:
+    networks:
       - kwetter-network
+
   registerorchservice:
     image: registerorchservice
     environment:
@@ -53,6 +54,7 @@ services:
       - 7272:8081
     networks:
       - kwetter-network
+
   API-Gateway:
     image: gateway
     build:
@@ -63,7 +65,6 @@ services:
       - 7039:8081
     networks:
       - kwetter-network
-
 
 networks:
   kwetter-network:

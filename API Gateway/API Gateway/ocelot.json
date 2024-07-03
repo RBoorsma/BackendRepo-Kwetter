@@ -105,6 +105,19 @@
       "SwaggerKey": "UserProfileService.API"
     },
     {
+      "DownstreamPathTemplate":  "/profiles/loadtest",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5193
+        }
+      ],
+      "UpstreamPathTemplate": "/api/profiles/loadtest",
+      "UpstreamHttpMethod": [ "POST" ],
+      "SwaggerKey": "UserProfileService.API"
+    },
+    {
       "DownstreamPathTemplate":  "/user/create",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [

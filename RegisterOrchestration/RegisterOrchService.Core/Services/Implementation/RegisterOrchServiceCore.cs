@@ -11,6 +11,7 @@ using RegisterOrchService.Core.OrchestrationModels.UserProfile;
 using RegisterOrchService.Core.Services.Models;
 using RegisterOrchService.Core.ViewModel;
 using RegisterOrchService.Core.ViewModel.ResponseBody;
+using StringContent = System.Net.Http.StringContent;
 
 namespace RegisterOrchService.Core.Services;
 
@@ -56,6 +57,7 @@ public class RegisterOrchServiceCore(IMapper mapper, IMessageHandler handler, IC
                         HttpResponseMessage profileTask = await client.PostAsync(userProfileURL, profileContent);
                         if (profileTask.IsSuccessStatusCode)
                         {
+                            
                             return true;
                         }
                     }

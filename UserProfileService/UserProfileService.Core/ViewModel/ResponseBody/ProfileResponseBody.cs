@@ -4,5 +4,5 @@ public class ProfileResponseBody
 {
     public string firstName { get; set; }
     public string lastName { get; set; }
-    public Guid id { get; set; }
+    public Guid ProfileID { get; set; }
 }

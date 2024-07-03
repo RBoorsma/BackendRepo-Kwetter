@@ -10,7 +10,8 @@ services:
     ports:
       - 5235:8080
       - 7072:8081
-
+   networks:
+      - kwetter-network
   registerorchservice:
     image: registerorchservice
     environment:
@@ -50,6 +51,16 @@ services:
     ports:
       - 5272:8080
       - 7272:8081
+    networks:
+      - kwetter-network
+  API-Gateway:
+    image: gateway
+    build:
+      context: .
+      dockerfile: API Gateway/API Gateway/Dockerfile
+    ports:
+      - 5208:8080
+      - 7039:8081
     networks:
       - kwetter-network
 

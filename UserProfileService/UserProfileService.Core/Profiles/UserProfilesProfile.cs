@@ -14,5 +14,6 @@ public class UserProfilesProfile : Profile
         CreateMap<NewProfileRequestBody, MessagingBody>();
         CreateMap<UserProfile, ProfileResponseBody>();
         CreateMap<ProfileRequestBody, UserProfile>();
+        CreateMap<ProfileByUserRequestBody, UserProfile>();
     }
 }

@@ -61,7 +61,7 @@
           "Port": 5193
         }
       ],
-      "UpstreamPathTemplate": "/api/profiles/getprofile",
+      "UpstreamPathTemplate": "/api/profiles/create",
       "UpstreamHttpMethod": [ "POST" ],
       "SwaggerKey": "UserProfileService.API"
     },
@@ -74,7 +74,33 @@
           "Port": 5193
         }
       ],
-      "UpstreamPathTemplate": "/api/profiles/create",
+      "UpstreamPathTemplate": "/api/profiles/getprofile",
+      "UpstreamHttpMethod": [ "POST" ],
+      "SwaggerKey": "UserProfileService.API"
+    },
+    {
+      "DownstreamPathTemplate":  "/profiles/serverless",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5193
+        }
+      ],
+      "UpstreamPathTemplate": "/api/profiles/serverless",
+      "UpstreamHttpMethod": [ "POST" ],
+      "SwaggerKey": "UserProfileService.API"
+    },
+    {
+      "DownstreamPathTemplate":  "/profiles/GetProfileByUserID",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5193
+        }
+      ],
+      "UpstreamPathTemplate": "/api/profiles/GetProfileByUserID",
       "UpstreamHttpMethod": [ "POST" ],
       "SwaggerKey": "UserProfileService.API"
     },
@@ -142,7 +168,7 @@
       "Key": "UserProfileService.API",
       "Config": [
         {
-          "Name": "UserServiceServer API",
+          "Name": "UserProfileService API",
           "Version": "v1",
           "Url": "http://localhost:5193/swagger/v1/swagger.json"
         }

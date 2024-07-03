@@ -1,4 +1,5 @@
 ﻿using System.Runtime;
+using System.Text.Json;
 using AutoMapper;
 using Kwetter.Library.Messaging.Datatypes;
 using UserProfileService.Core.Messaging.Handler;
@@ -35,13 +36,28 @@ public class UserProfileServiceCore(
             return false;
         }
     }
+    public async Task<string> Serverless()
+    {
+        using (HttpClient client = new())
+        {
+            HttpResponseMessage response = await client.GetAsync("https://hello-world.robboorsma.workers.dev/");
+            if (response.IsSuccessStatusCode)
+            {
+                string responseContent = await response.Content.ReadAsStringAsync();
+                string myanswer = responseContent + " Serverless Function Succesfull!";
+                return myanswer;
+            }
+        }
+
+        return "failed to reach serverless function";
+    }
     public async Task<ProfileResponseBody> LoadTestDemo(ProfileRequestBody body)
     {
         UserProfile user = mapper.Map<UserProfile>(body);
         ProfileResponseBody profile = mapper.Map<ProfileResponseBody>(user);
         for(int i = 0; i < 10; i++)
         {
-            profile.id = Guid.NewGuid();
+            profile.ProfileID = Guid.NewGuid();
         }
         profile.firstName = "Load";
         profile.lastName = "Test";
@@ -54,6 +70,19 @@ public class UserProfileServiceCore(
         {
             
             UserProfile profile = await userRepository.GetProfile(mapper.Map<UserProfile>(body));
+            return mapper.Map<ProfileResponseBody>(profile);
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+    }
+    public async Task<ProfileResponseBody?> GetProfileByUserID(ProfileByUserRequestBody body)
+    {
+        try
+        {
+            
+            UserProfile profile = await userRepository.GetProfileByUserID(mapper.Map<UserProfile>(body));
             return mapper.Map<ProfileResponseBody>(profile);
         }
         catch (Exception)

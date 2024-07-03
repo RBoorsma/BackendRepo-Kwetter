@@ -9,5 +9,7 @@ public interface IUserProfileService
     Task RollbackOrDeleteCreation(Guid UserID, Guid Correlation);
     Task<ProfileResponseBody?> GetProfile(ProfileRequestBody body);
     Task<ProfileResponseBody> LoadTestDemo(ProfileRequestBody body);
+    Task<string> Serverless();
+    Task<ProfileResponseBody?> GetProfileByUserID(ProfileByUserRequestBody body);
 
 }

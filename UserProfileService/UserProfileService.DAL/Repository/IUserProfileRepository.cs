@@ -7,4 +7,5 @@ public interface IUserProfileRepository
     Task<bool> Create(UserProfile userProfile);
     Task<bool> RollBackOrDeleteAsync(Guid guid);
     Task<UserProfile> GetProfile(UserProfile body);
+    Task<UserProfile> GetProfileByUserID(UserProfile body);
 }

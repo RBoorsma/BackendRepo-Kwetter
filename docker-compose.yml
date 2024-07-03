@@ -9,7 +9,6 @@ services:
       dockerfile: KweetService/KweetService/KweetService/Dockerfile
     ports:
       - 5235:8080
-      - 7072:8081
     networks:
       - kwetter-network
 
@@ -23,7 +22,6 @@ services:
       dockerfile: RegisterOrchestration/RegisterOrchService/Dockerfile
     ports:
       - 5254:8080
-      - 7138:8081
     networks:
       - kwetter-network
 
@@ -37,7 +35,6 @@ services:
       dockerfile: UserProfileService/UserProfileService/Dockerfile
     ports:
       - 5193:8080
-      - 7106:8081
     networks:
       - kwetter-network
 
@@ -51,7 +48,6 @@ services:
       dockerfile: User_Profile/UserService/Dockerfile
     ports:
       - 5272:8080
-      - 7272:8081
     networks:
       - kwetter-network
 
@@ -62,7 +58,6 @@ services:
       dockerfile: API Gateway/API Gateway/Dockerfile
     ports:
       - 5208:8080
-      - 7039:8081
     networks:
       - kwetter-network
 

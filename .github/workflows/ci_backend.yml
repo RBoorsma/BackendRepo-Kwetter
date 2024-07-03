@@ -124,3 +124,7 @@ jobs:
         run: |
           docker tag kweetservice:latest rboorsma/kwetter:kweetservice-latest
           docker push rboorsma/kwetter:kweetservice-latest
+      - name: Tag and Push Gatway
+        run: |
+          docker tag gateway:latest rboorsma/kwetter:gateway-latest
+          docker push rboorsma/kwetter:gateway-latest

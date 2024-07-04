@@ -1,4 +1,5 @@
 ﻿using System.Runtime;
+using System.Text;
 using System.Text.Json;
 using AutoMapper;
 using Kwetter.Library.Messaging.Datatypes;
@@ -55,9 +56,14 @@ public class UserProfileServiceCore(
     {
         UserProfile user = mapper.Map<UserProfile>(body);
         ProfileResponseBody profile = mapper.Map<ProfileResponseBody>(user);
-        for(int i = 0; i < 10; i++)
+        for(int i = 0; i < 10000; i++)
         {
             profile.ProfileID = Guid.NewGuid();
+            for (int j = 0; j < 100; j++)
+            {
+                //Some random code to make the function a bit slower
+               var tempString = Convert.ToBase64String(Encoding.UTF8.GetBytes(profile.ProfileID.ToString()));
+            }
         }
         profile.firstName = "Load";
         profile.lastName = "Test";

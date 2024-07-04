@@ -12,7 +12,7 @@ using UserProfileService.DAL.Repository.Implementation;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-Console.WriteLine("new version loaded");
+Console.WriteLine("Newest version is running");
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

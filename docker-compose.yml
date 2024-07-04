@@ -13,7 +13,7 @@ services:
       - kwetter-network
 
   registerorchservice:
-    image: registerorchservice
+    image: registerorch
     environment:
       - MySQL=${MySQL}
       - rabbitmq=${rabbitmq}

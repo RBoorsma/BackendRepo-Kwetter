@@ -118,7 +118,7 @@ jobs:
           docker push rboorsma/kwetter:userprofileservice-latest
       - name: Tag and Push RegisterOrchService
         run: |
-          docker tag registerorchservice:latest rboorsma/kwetter:registerorch-latest
+          docker tag registerorch:latest rboorsma/kwetter:registerorch-latest
           docker push rboorsma/kwetter:registerorch-latest
       - name: Tag and Push KweetService
         run: |
